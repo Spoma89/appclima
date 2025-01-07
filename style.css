@@ -108,7 +108,7 @@ footer strong {
 
 /* Media Queries para diseño responsivo */
 
-@media (max-width: 768px) {
+@media (max-width: 668px) {
   .container {
     width: 95%; /* Más ancho para dispositivos pequeños */
     padding: 15px; /* Menos espacio de relleno */
@@ -124,7 +124,7 @@ footer strong {
   }
 
   .forecast-container {
-    flex-wrap: nowrap; /* Evita que las tarjetas se apilen verticalmente */
+    flex-wrap: wrap; /* Evita que las tarjetas se apilen verticalmente */
     gap: 10px; /* Menor espacio entre tarjetas */
   }
 

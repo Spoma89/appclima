@@ -1,9 +1,14 @@
+// Selección de elementos del DOM
 const weatherForm = document.getElementById('weatherForm');
 const cityInput = document.getElementById('cityInput');
 const weatherResult = document.getElementById('weatherResult');
+const forecastButton = document.getElementById('forecastButton');
+const forecastSection = document.getElementById('forecastSection');
 
+// Tu API Key de OpenWeather
 const API_KEY = '8d2612c14b7ee309ebdafc1b0e184c11';
 
+// Escuchar el envío del formulario para obtener el clima actual
 weatherForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const city = cityInput.value.trim();
@@ -12,10 +17,19 @@ weatherForm.addEventListener('submit', (event) => {
   }
 });
 
-async function getWeather(city) {
-  // Normalizar la ciudad, eliminando los acentos
-  const normalizedCity = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+// Escuchar el clic en el botón para obtener el pronóstico extendido
+forecastButton.addEventListener('click', () => {
+  const city = cityInput.value.trim();
+  if (city) {
+    getForecast(city);
+  } else {
+    forecastSection.innerHTML = `<p class="error">Por favor ingresa una ciudad para ver el pronóstico.</p>`;
+  }
+});
 
+// Obtener el clima actual
+async function getWeather(city) {
+  const normalizedCity = city.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Normalizar la ciudad
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${normalizedCity}&appid=${API_KEY}&units=metric&lang=es`;
 
   try {
@@ -35,13 +49,14 @@ async function getWeather(city) {
   }
 }
 
+// Mostrar la información del clima actual
 function displayWeather(data) {
   const { name, main, weather } = data;
+  const weatherCondition = weather[0].main;
 
-  const weatherCondition = weather[0].main; 
+  // Cambiar el fondo según la condición del clima
   changeBackground(weatherCondition);
 
-  // Mostrar la información del clima
   weatherResult.innerHTML = `
     <h2>${name}</h2>
     <p>Temperatura: ${main.temp}°C</p>
@@ -49,8 +64,9 @@ function displayWeather(data) {
   `;
 }
 
+// Cambiar el fondo dinámicamente según la condición del clima
 function changeBackground(condition) {
-  const body = document.body; 
+  const body = document.body;
   let backgroundImage = '';
 
   switch (condition) {
@@ -77,47 +93,19 @@ function changeBackground(condition) {
       backgroundImage = 'images/mist.jpg';
       break;
     default:
-      backgroundImage = 'images/default.jpg'; 
+      backgroundImage = 'images/default.jpg';
       break;
   }
 
-  // Cambiar el fondo
   body.style.backgroundImage = `url(${backgroundImage})`;
   body.style.backgroundSize = 'cover';
   body.style.backgroundPosition = 'center';
 }
 
-async function getLocationWeather() {
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const { latitude, longitude } = position.coords;
-
-      // Obtener la ciudad basándonos en la ubicación (usamos la latitud y longitud)
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric&lang=es`;
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Hubo un problema al obtener los datos de la ubicación.');
-        }
-
-        const data = await response.json();
-        displayWeather(data);
-      } catch (error) {
-        weatherResult.innerHTML = `<p class="error">${error.message}</p>`;
-      }
-    }, (error) => {
-      weatherResult.innerHTML = `<p class="error">No se pudo obtener tu ubicación.</p>`;
-    });
-  } else {
-    weatherResult.innerHTML = `<p class="error">La geolocalización no está disponible en tu navegador.</p>`;
-  }
-}
-
-getLocationWeather();  // Llamada para obtener el clima de la ciudad en la que se abre la aplicación
-
+// Obtener el pronóstico de 5 días
 async function getForecast(city) {
-  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=es`;
+  const normalizedCity = city.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Normalizar la ciudad
+  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${normalizedCity}&appid=${API_KEY}&units=metric&lang=es`;
 
   try {
     const response = await fetch(url);
@@ -128,18 +116,19 @@ async function getForecast(city) {
     const data = await response.json();
     displayForecast(data);
   } catch (error) {
-    weatherResult.innerHTML += `<p class="error">${error.message}</p>`;
+    forecastSection.innerHTML = `<p class="error">${error.message}</p>`;
   }
 }
 
+// Mostrar el pronóstico de los próximos 5 días
 function displayForecast(data) {
-  const forecastContainer = document.createElement('div');
-  forecastContainer.classList.add('forecast-container');
-  weatherResult.appendChild(forecastContainer);
+  // Limpiar el contenedor antes de mostrar el pronóstico
+  forecastSection.innerHTML = '<h3>Pronóstico de los próximos 5 días:</h3>';
 
+  // Filtrar las entradas para obtener solo el pronóstico del mediodía
   const filteredData = data.list.filter(item => item.dt_txt.includes("12:00:00"));
 
-  forecastContainer.innerHTML = '<h3>Pronóstico de los próximos 5 días:</h3>';
+  // Crear tarjetas para cada día del pronóstico
   filteredData.forEach(forecast => {
     const date = new Date(forecast.dt * 1000).toLocaleDateString("es-ES", {
       weekday: "long",
@@ -159,6 +148,35 @@ function displayForecast(data) {
       <p><strong>${temp}°C</strong></p>
     `;
 
-    forecastContainer.appendChild(card);
+    forecastSection.appendChild(card);
   });
 }
+
+// Obtener el clima actual basado en la ubicación del usuario
+async function getLocationWeather() {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric&lang=es`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Hubo un problema al obtener los datos de la ubicación.');
+        }
+
+        const data = await response.json();
+        displayWeather(data);
+      } catch (error) {
+        weatherResult.innerHTML = `<p class="error">${error.message}</p>`;
+      }
+    }, () => {
+      weatherResult.innerHTML = `<p class="error">No se pudo obtener tu ubicación.</p>`;
+    });
+  } else {
+    weatherResult.innerHTML = `<p class="error">La geolocalización no está disponible en tu navegador.</p>`;
+  }
+}
+
+// Llamada inicial para mostrar el clima de la ubicación del usuario
+
