@@ -85,4 +85,58 @@ function displayWeather(data) {
     body.style.backgroundSize = 'cover';
     body.style.backgroundPosition = 'center';
   }
+  weatherForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const city = cityInput.value.trim();
+    if (city) {
+      getWeather(city); // Clima actual
+      getForecast(city); // Pronóstico de 5 días
+    }
+  });
+  async function getForecast(city) {
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=es`;
   
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Hubo un problema al obtener el pronóstico.');
+      }
+  
+      const data = await response.json();
+      displayForecast(data);
+    } catch (error) {
+      weatherResult.innerHTML += `<p class="error">${error.message}</p>`;
+    }
+  }
+  
+  function displayForecast(data) {
+    const forecastContainer = document.createElement('div');
+    forecastContainer.classList.add('forecast-container');
+    weatherResult.appendChild(forecastContainer);
+  
+    const filteredData = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+  
+    forecastContainer.innerHTML = '<h3>Pronóstico de los próximos 5 días:</h3>';
+    filteredData.forEach(forecast => {
+      const date = new Date(forecast.dt * 1000).toLocaleDateString("es-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "short",
+      });
+      const temp = Math.round(forecast.main.temp);
+      const description = forecast.weather[0].description;
+      const icon = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
+  
+      const card = document.createElement('div');
+      card.classList.add('forecast-card');
+      card.innerHTML = `
+        <p>${date}</p>
+        <img src="${icon}" alt="${description}">
+        <p>${description}</p>
+        <p><strong>${temp}°C</strong></p>
+      `;
+  
+      forecastContainer.appendChild(card);
+    });
+  }
+    

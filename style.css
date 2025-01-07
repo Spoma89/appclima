@@ -1,72 +1,156 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #7881aa;
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; /* Cambiado a columna para manejar contenido vertical */
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Cambiado a "min-height" para mejor adaptabilidad */
+  background-image: url(images/sunny.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.2); /* Transparencia */
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  backdrop-filter: blur(11px); /* Efecto de desenfoque */
+  -webkit-backdrop-filter: blur(8px); /* Compatibilidad con Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Borde semitransparente */
+  padding: 20px 30px;
+  text-align: center;
+  color: rgb(47, 43, 43);
+  width: 90%; /* Se ajusta al ancho de la pantalla en dispositivos pequeños */
+  max-width: 500px; /* Limita el ancho máximo en pantallas grandes */
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 1.8rem; /* Ajuste de tamaño */
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 10px;
+  width: calc(100% - 90px); /* Ajusta el tamaño dinámicamente */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#weatherResult {
+  margin-top: 20px;
+}
+
+footer {
+  background-color: #3f75e0; 
+  color: #fff; 
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  width: 100%; 
+  margin-top: 20px; /* Espaciado en pantallas pequeñas */
+}
+
+footer strong {
+  color: #388eb0;
+}
+
+.forecast-container {
+  margin-top: 20px;
+  display: flex; /* Flexbox para alinear los elementos */
+  flex-direction: row; /* Alineación horizontal */
+  justify-content: center; /* Centrar las tarjetas */
+  gap: 15px; /* Espaciado entre las tarjetas */
+  overflow-x: auto; /* Habilita scroll horizontal si es necesario */
+  padding: 10px;
+}
+
+.forecast-card {
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  padding: 10px;
+  width: 150px; /* Ancho fijo para las tarjetas */
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.forecast-card img {
+  width: 50px;
+  height: 50px;
+}
+
+.forecast-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+/* Media Queries para diseño responsivo */
+
+@media (max-width: 768px) {
   .container {
-    background: rgba(255, 255, 255, 0.2); /* Transparencia */
-    border-radius: 15px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    backdrop-filter: blur(11px); /* Efecto de desenfoque */
-    -webkit-backdrop-filter: blur(8px); /* Compatibilidad con Safari */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Borde semitransparente */
-    padding: 20px 30px;
-    text-align: center;
-    color: white;
-    width: 300px;
+    width: 95%; /* Más ancho para dispositivos pequeños */
+    padding: 15px; /* Menos espacio de relleno */
   }
-  
-  h1 {
-    margin-bottom: 20px;
-  }
-  
-  form {
-    margin-bottom: 20px;
-  }
-  
+
   input {
-    padding: 10px;
-    width: 70%;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-right: 10px;
+    width: calc(100% - 70px); /* Ajuste del input */
+    margin-right: 5px;
   }
-  
-  button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
+
+  h1 {
+    font-size: 1.5rem; /* Reducir tamaño de la fuente en pantallas pequeñas */
   }
-  
-  button:hover {
-    background-color: #0056b3;
+
+  .forecast-container {
+    flex-wrap: nowrap; /* Evita que las tarjetas se apilen verticalmente */
+    gap: 10px; /* Menor espacio entre tarjetas */
   }
-  
-  #weatherResult {
-    margin-top: 20px;
+
+  .forecast-card {
+    width: 120px; /* Reduce el tamaño de las tarjetas */
+    padding: 8px; /* Ajuste de espacio */
   }
+
   footer {
-    background-color: #161719; 
-    color: #fff; 
-    text-align: center;
-    padding: 10px 0
-    font-size: 14px;
-    position: fixed;
-    bottom: 0;
-    width: 100%; 
+    font-size: 12px; /* Reducir tamaño del texto */
+    padding: 8px 0;
   }
-  
-  footer strong {
-    color: #388eb0;
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem; /* Más pequeño en dispositivos muy pequeños */
   }
-  
+
+  button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+
+  .forecast-card {
+    width: 100px; /* Aún más pequeño para dispositivos muy pequeños */
+  }
+}
